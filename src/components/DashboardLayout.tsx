@@ -15,6 +15,7 @@ import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import AppHeader from "@/layout/AppHeader";
 import { useSidebar } from "@/context/SidebarContext";
+import { AuthApi } from "@/lib/fetchApi";
 
 const { Header, Footer, Sider, Content } = Layout;
 type MenuItem = GetProp<MenuProps, "items">[number];
@@ -35,6 +36,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     : isExpanded || isHovered
       ? "lg:ml-[290px]"
       : "lg:ml-[90px]";
+
+  useEffect(() => {
+    if (user?.email && user?.access) {
+      AuthApi("/api/process", "POST").then((res) => {
+        console.log(res);
+      });
+      AuthApi("/api/scan", "POST").then((res) => {
+        console.log(res);
+      });
+    }
+  }, [user?.email, user?.access]);
   return (
     <>
       <ConfigProvider

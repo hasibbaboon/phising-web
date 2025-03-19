@@ -1,25 +1,18 @@
+"use server";
 import { getServerSession } from "next-auth";
 import { BASE_URL } from "@/lib/common";
 import { authOptions } from "@/lib/authOptions";
 
-export async function AuthGetApi(url: string) {
+export async function AuthApi(url: string, method) {
   const session = await getServerSession(authOptions);
-  console.log("before: ", session?.user?.accessToken);
-
+  console.log("before: ", session?.user?.access);
+  // if (session?.user?.access) {
   let res = await fetch(BASE_URL + url, {
-    method: "GET",
+    method: method,
     headers: {
-      Authorization: `bearer ${session?.user?.accessToken}`,
-    },
-  });
-
-  res = await fetch(BASE_URL + url, {
-    method: "GET",
-    headers: {
-      Authorization: `bearer ${session?.user?.access}`,
+      Authorization: `Bearer ${session?.user?.access}`,
     },
   });
   return await res.json();
-
-  return await res.json();
+  // }
 }
