@@ -11,6 +11,7 @@ import LoginForm from "@/components/LoginForm";
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [loading, setLoading] = useState(true);
   const { data: session, update } = useSession();
   const user: any = session?.user;
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -19,18 +20,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     : isExpanded || isHovered
       ? "lg:ml-[290px]"
       : "lg:ml-[90px]";
-  const axiosAuth = useAxiosAuth();
-
+  // const axiosAuth = useAxiosAuth();
+  // const firstFetch = () => {
+  //   try {
+  //     axiosAuth.post("/api/scan");
+  //     axiosAuth.post("/api/process");
+  //   } catch {}
+  // };
+  // useEffect(() => {
+  //   if (user?.email && user?.access) {
+  //     firstFetch();
+  //   }
+  // }, [user?.email, user?.access]);
   useEffect(() => {
-    if (user?.email && user?.access) {
-      axiosAuth.post("/api/process").then((res) => {
-        console.log(res);
-      });
-      axiosAuth.post("/api/scan").then((res) => {
-        console.log(res);
-      });
-    }
-  }, [user?.email, user?.access]);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
   return (
     <>
       <ConfigProvider
@@ -57,7 +63,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
           </>
         ) : (
-          <LoginForm />
+          !loading && <LoginForm />
         )}
       </ConfigProvider>
     </>

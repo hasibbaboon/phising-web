@@ -597,3 +597,6 @@ layer(base);
   opacity: 0.8;
   cursor: grabbing; /* Changes the cursor to indicate dragging */
 }
+.nextjs-error-with-static{
+  display: none;
+}

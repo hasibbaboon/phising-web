@@ -21,18 +21,24 @@ export default function LoginForm() {
     }
   }, [user]);
   const onFinish = async (values: any) => {
-    setLoading(true);
-    const result = await signIn("email-password", {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-      app_password: values.app_password,
-      callbackUrl: "/",
-    });
+    // # ukas xdhw zpsz lsgz
+    try {
+      setLoading(true);
+      const result = await signIn("email-password", {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+        app_password: values.app_password,
+        callbackUrl: "/",
+      });
 
-    if (result?.error) {
+      if (result?.error) {
+        message.error("Credentials Failed");
+      }
+    } catch {
       message.error("Credentials Failed");
     }
+
     setLoading(false);
   };
 

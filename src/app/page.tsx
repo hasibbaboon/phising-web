@@ -11,11 +11,19 @@ export default function Home() {
   const user: any = session?.user;
   const [dashboardData, setDashboardData] = useState(null);
   const axiosAuth = useAxiosAuth();
+  const getDData = async () => {
+    const res = await axiosAuth.get("/api/scan");
+    if (res) {
+      setDashboardData(res?.data);
+    }
+  };
   useEffect(() => {
     if (user?.email) {
-      axiosAuth.get("/api/scan").then((res) => {
-        setDashboardData(res?.data);
-      });
+      getDData();
+      const interval = setInterval(() => {
+        getDData();
+      }, 10 * 1000);
+      return () => clearInterval(interval);
     }
   }, [user?.email]);
   return (

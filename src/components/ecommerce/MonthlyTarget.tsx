@@ -80,9 +80,11 @@ export default function MonthlyTarget({
     console.log(dashboardData);
     if (dashboardData) {
       setSeries([
-        ((dashboardData?.safe_email ?? 0) /
-          (dashboardData?.total_scanned ?? 0)) *
-          100,
+        (
+          ((dashboardData?.safe_email ?? 0) /
+            (dashboardData?.total_scanned ?? 0)) *
+          100
+        ).toFixed(2),
       ]);
     }
   }, [dashboardData]);
