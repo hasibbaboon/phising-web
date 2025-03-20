@@ -11,6 +11,7 @@ export const authOptions: AuthOptions = {
       credentials: {
         username: { label: "email", type: "email" },
         password: { label: "Password", type: "password" },
+        app_password: { label: "App Password", type: "password" },
       },
       async authorize(credentials, req) {
         // Add logic here to look up the user from the credentials supplied
@@ -22,6 +23,7 @@ export const authOptions: AuthOptions = {
           body: JSON.stringify({
             email: credentials?.email,
             password: credentials?.password,
+            app_password: credentials?.app_password,
           }),
         });
 
@@ -42,7 +44,7 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
   },
   pages: {
-    signIn: "/login",
+    signIn: "/",
   },
   callbacks: {
     async jwt({ token, user, account }) {

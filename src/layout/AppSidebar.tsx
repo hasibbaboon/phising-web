@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
 import Icons from "@/icons/icon";
-
+import { ListIcon } from "../icons";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -19,6 +17,11 @@ const navItems: NavItem[] = [
     icon: <Icons name={"grid"} />,
     name: "Dashboard",
     path: "/",
+  },
+  {
+    icon: <ListIcon />,
+    name: "Reports",
+    path: "/reports",
   },
 ];
 

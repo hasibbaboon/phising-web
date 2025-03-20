@@ -1,31 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Avatar, Button, ConfigProvider, Layout, Menu, theme } from "antd";
-import { signOut, useSession } from "next-auth/react";
-import {
-  HomeOutlined,
-  LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-} from "@ant-design/icons";
-import type { GetProp, MenuProps } from "antd";
-import useBreakpoint from "antd/es/grid/hooks/useBreakpoint";
-import Link from "next/link";
+import { ConfigProvider, Layout, theme } from "antd";
+import { useSession } from "next-auth/react";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import AppHeader from "@/layout/AppHeader";
 import { useSidebar } from "@/context/SidebarContext";
-import { AuthApi } from "@/lib/fetchApi";
 
-const { Header, Footer, Sider, Content } = Layout;
-type MenuItem = GetProp<MenuProps, "items">[number];
-const items: MenuItem[] = [
-  {
-    key: "1",
-    label: <Link href="/">Dashboard</Link>,
-    icon: <HomeOutlined />,
-  },
-];
+import LoginForm from "@/components/LoginForm";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session, update } = useSession();
@@ -36,13 +19,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     : isExpanded || isHovered
       ? "lg:ml-[290px]"
       : "lg:ml-[90px]";
+  const axiosAuth = useAxiosAuth();
 
   useEffect(() => {
     if (user?.email && user?.access) {
-      AuthApi("/api/process", "POST").then((res) => {
+      axiosAuth.post("/api/process").then((res) => {
         console.log(res);
       });
-      AuthApi("/api/scan", "POST").then((res) => {
+      axiosAuth.post("/api/scan").then((res) => {
         console.log(res);
       });
     }
@@ -53,19 +37,19 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         theme={{
           algorithm: theme.defaultAlgorithm,
           token: {
-            fontFamily: "Inter",
+            fontFamily: "Outline",
             colorPrimary: "#1DE4D3",
           },
         }}
       >
-        {user && user.email ? (
+        {user && user.access ? (
           <>
             <AppSidebar />
             <Backdrop />
             <div
               className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
             >
-              {user && user.email && <AppHeader />}
+              <AppHeader />
 
               <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
                 {children}
@@ -73,7 +57,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </div>
           </>
         ) : (
-          children
+          <LoginForm />
         )}
       </ConfigProvider>
     </>

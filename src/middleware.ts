@@ -7,7 +7,7 @@ export async function middleware(request) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  if (!token) return NextResponse.redirect(new URL("/login", request.url));
+  // if (!token) return NextResponse.redirect(new URL("/login", request.url));
   //
   // // Check the role and redirect based on the role
   // switch (token.role) {
