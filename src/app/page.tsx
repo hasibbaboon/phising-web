@@ -10,6 +10,7 @@ export default function Home() {
   const { data: session, update } = useSession();
   const user: any = session?.user;
   const [dashboardData, setDashboardData] = useState(null);
+  const [fullScanned, setFullScanned] = useState(false);
   const axiosAuth = useAxiosAuth();
   const getDData = async () => {
     const res = await axiosAuth.get("/api/scan");
@@ -26,6 +27,25 @@ export default function Home() {
       return () => clearInterval(interval);
     }
   }, [user?.email]);
+  useEffect(() => {
+    if (
+      dashboardData &&
+      dashboardData.total_email !== dashboardData.total_scanned
+    ) {
+      axiosAuth.post("/api/process-email");
+    } else if (
+      dashboardData &&
+      dashboardData.total_email === dashboardData.total_scanned &&
+      !fullScanned
+    ) {
+      axiosAuth.post("/api/scan-email").then((res) => {
+        console.log(res);
+        if (res.data.okay) {
+          setFullScanned(true);
+        }
+      });
+    }
+  }, [dashboardData, fullScanned]);
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
       <div className="col-span-12 space-y-6 xl:col-span-7">

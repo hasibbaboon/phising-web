@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "@/context/SidebarContext";
 import Icons from "@/icons/icon";
-import { ListIcon } from "../icons";
+import { ListIcon, UserIcon } from "../icons";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -22,6 +22,11 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     name: "Reports",
     path: "/reports",
+  },
+  {
+    icon: <UserIcon />,
+    name: "Profile & Settings",
+    path: "/profile",
   },
 ];
 

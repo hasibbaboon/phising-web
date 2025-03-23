@@ -598,5 +598,5 @@ layer(base);
   cursor: grabbing; /* Changes the cursor to indicate dragging */
 }
 .nextjs-error-with-static{
-  display: none;
+  display: none!important;
 }

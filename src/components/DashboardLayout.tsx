@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ConfigProvider, Layout, theme } from "antd";
+import { ConfigProvider, Layout, theme, ThemeConfig } from "antd";
 import { useSession } from "next-auth/react";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
@@ -8,7 +8,6 @@ import AppHeader from "@/layout/AppHeader";
 import { useSidebar } from "@/context/SidebarContext";
 
 import LoginForm from "@/components/LoginForm";
-import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -20,34 +19,20 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     : isExpanded || isHovered
       ? "lg:ml-[290px]"
       : "lg:ml-[90px]";
-  // const axiosAuth = useAxiosAuth();
-  // const firstFetch = () => {
-  //   try {
-  //     axiosAuth.post("/api/scan");
-  //     axiosAuth.post("/api/process");
-  //   } catch {}
-  // };
-  // useEffect(() => {
-  //   if (user?.email && user?.access) {
-  //     firstFetch();
-  //   }
-  // }, [user?.email, user?.access]);
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   }, []);
+  const theme: ThemeConfig = {
+    token: {
+      fontFamily: "Outline",
+      colorPrimary: "#1DE4D3",
+    },
+  };
   return (
     <>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.defaultAlgorithm,
-          token: {
-            fontFamily: "Outline",
-            colorPrimary: "#1DE4D3",
-          },
-        }}
-      >
+      <ConfigProvider theme={theme}>
         {user && user.access ? (
           <>
             <AppSidebar />

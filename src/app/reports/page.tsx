@@ -9,10 +9,12 @@ import {
   TablePaginationConfig,
   TableProps,
   Radio,
+  Button,
 } from "antd";
 import type { SorterResult } from "antd/es/table/interface";
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 import { CheckOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 interface TableParams {
   pagination?: TablePaginationConfig;
@@ -61,6 +63,38 @@ export default function Reports() {
     }
     setLoading(false);
   };
+  const exportPdf = async () => {
+    setLoading(true);
+    const url = `/api/scan`;
+    const res = await axiosAuth.post(url);
+    if (res && res?.data) {
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "file.csv"); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    }
+    setLoading(false);
+  };
+  const markAsSafe = async (id) => {
+    setLoading(true);
+    const url = `/api/mark-safe`;
+    const res = await axiosAuth.post(url, { id: id });
+    if (res) {
+      getUsers();
+    }
+    setLoading(false);
+  };
+  const markAsSpam = async (id) => {
+    setLoading(true);
+    const url = `/api/mark-spam`;
+    const res = await axiosAuth.post(url, { id: id });
+    if (res) {
+      getUsers();
+    }
+    setLoading(false);
+  };
   useEffect(() => {
     getUsers();
   }, [
@@ -74,17 +108,24 @@ export default function Reports() {
     {
       title: "Subject",
       dataIndex: "subject",
+      className: "max-w-[400px]",
     },
     {
       title: "Message",
       dataIndex: "message",
+      className: "max-w-[400px]",
     },
     {
       title: "Flagged",
       dataIndex: "isPhishing",
       sorter: true,
-      render: (value, record, index) =>
-        record.isPhishing ? "Phishing" : "Safe",
+      render: (value, record, index) => (
+        <div>
+          {record.isPhishing ? "Phishing" : "Safe"}
+          {record?.reportAsSafe && <div>(Reported As Safe)</div>}
+          {record?.isSpammed && <div>(Reported As Spam)</div>}
+        </div>
+      ),
     },
     {
       title: "Severity",
@@ -107,6 +148,59 @@ export default function Reports() {
               )
             </span>
           )}
+        </div>
+      ),
+    },
+    {
+      title: "Created At",
+      dataIndex: "created_at",
+      sorter: true,
+      render: (value, record, index) => (
+        <div>{moment(record.created_at).format("YYYY-MM-DD hh:mm A")}</div>
+      ),
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      render: (value, record, index) => (
+        <div className={"flex gap-3 items-center"}>
+          {record?.isPhishing
+            ? !record?.reportAsSafe && (
+                <Button
+                  color={"primary"}
+                  variant={"solid"}
+                  className={
+                    "px-3 h-[34px] font-bold rounded-[8px] border border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                  }
+                  onClick={() => {
+                    if (window.confirm("Are you sure to change this record?")) {
+                      markAsSafe(record.id).then(() => {
+                        getUsers();
+                      });
+                    }
+                  }}
+                >
+                  Mark As Safe
+                </Button>
+              )
+            : !record?.isSpammed && (
+                <Button
+                  color={"danger"}
+                  variant={"solid"}
+                  className={
+                    "px-3 h-[34px] font-bold rounded-[8px] border border-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                  }
+                  onClick={() => {
+                    if (window.confirm("Are you sure to change this record?")) {
+                      markAsSpam(record.id).then(() => {
+                        getUsers();
+                      });
+                    }
+                  }}
+                >
+                  Mark As Spam
+                </Button>
+              )}
         </div>
       ),
     },
@@ -146,11 +240,23 @@ export default function Reports() {
     <div>
       <div className={"flex flex-wrap items-center gap-3 justify-between"}>
         <h6 className={"mb-4 mt-2 text-primary text-[18px]"}>Report List</h6>
-        <Radio.Group onChange={onChange} defaultValue="all">
-          <Radio.Button value="all">All</Radio.Button>
-          <Radio.Button value={"true"}>Flagged</Radio.Button>
-          <Radio.Button value={"false"}>Safe</Radio.Button>
-        </Radio.Group>
+        <div>
+          <Radio.Group onChange={onChange} defaultValue="all">
+            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value={"true"}>Flagged</Radio.Button>
+            <Radio.Button value={"false"}>Safe</Radio.Button>
+          </Radio.Group>
+          <Button
+            className={"ml-2"}
+            loading={loading}
+            onClick={() => {
+              exportPdf();
+            }}
+          >
+            Export As CSV
+          </Button>
+        </div>
+
         {/*<form className={"flex items-center mb-2"} onSubmit={handelFormSubmit}>*/}
         {/*  <div className="flex">*/}
         {/*    <input*/}
