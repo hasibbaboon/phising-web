@@ -106,6 +106,12 @@ export default function Reports() {
 
   const columns: TableColumnsType<any> = [
     {
+      title: "Email Id",
+      dataIndex: "email_id",
+      className: "max-w-[200px]",
+      sorter: true,
+    },
+    {
       title: "Subject",
       dataIndex: "subject",
       className: "max-w-[400px]",
